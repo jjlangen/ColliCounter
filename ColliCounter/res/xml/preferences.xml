@@ -2,16 +2,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
-        android:summary="Username and password information"
+        android:summary="settings"
         android:title="Instellingen" >
-        <EditTextPreference
-            android:key="name"
-            android:summary="Hoe heet u?"
-            android:title="Naam" />
         <CheckBoxPreference
             android:key="checkBox"
             android:summary="Of geef mij een euro"
             android:title="Gebruik advertenties" />
+        
+        <com.jens.collicounter.TimePickerPreference
+            android:key="time"
+            android:title="Begin werktijd" />
+        
 
     </PreferenceCategory>
 

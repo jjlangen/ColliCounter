@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jens.collicounter"
     android:installLocation="auto"
-    android:versionCode="5"
-    android:versionName="0.41" >
+    android:versionCode="6"
+    android:versionName="0.42" >
 
     <uses-sdk
         android:minSdkVersion="7"
