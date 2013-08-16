@@ -30,7 +30,7 @@ public class MainActivity extends SherlockActivity implements
 	private int totalColliCount;
 	private int newTicketColli;
 	private int finishedColli;
-// lol
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,15 +72,6 @@ public class MainActivity extends SherlockActivity implements
 		outState.putInt("newTicketColli", newTicketColli);
 		outState.putInt("finishedColli", finishedColli);
 		Log.d("DBG", "onSaveInstanceState was called");
-	}
-	
-	public void testGit() {
-		Log.d("testgit", "testing git");
-	}
-
-	
-	public void trollgal() {
-		Log.d("testgit", "testing git");
 	}
 
 	// NEW
