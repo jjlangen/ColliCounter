@@ -1,18 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <PreferenceCategory
-        android:summary="Username and password information"
-        android:title="Instellingen" >
-        <EditTextPreference
-            android:key="name"
-            android:summary="Hoe heet u?"
-            android:title="Naam" />
-        <CheckBoxPreference
-            android:key="checkBox"
-            android:summary="Of geef mij een euro"
-            android:title="Gebruik advertenties" />
-
-    </PreferenceCategory>
-
-</PreferenceScreen>
