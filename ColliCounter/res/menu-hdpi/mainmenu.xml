@@ -15,6 +15,5 @@
         android:showAsAction="always"
         android:title="@string/settings">
     </item>
-    
 
 </menu>

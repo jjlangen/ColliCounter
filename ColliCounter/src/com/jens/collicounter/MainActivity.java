@@ -1,5 +1,6 @@
 package com.jens.collicounter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +22,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class MainActivity extends SherlockActivity implements
 		OnItemSelectedListener {
 
-	private EditText user_input;
+	private EditText userInput;
 	private TextView text2;
 	private TextView text3;
 	private TextView text4;
@@ -34,24 +35,34 @@ public class MainActivity extends SherlockActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		setContentView(R.layout.activity_main);
+		userInput = (EditText) findViewById(R.id.editText1);
+		text2 = (TextView) findViewById(R.id.textView6);
+		text3 = (TextView) findViewById(R.id.textView7);
+		text4 = (TextView) findViewById(R.id.textView8);
+		text5 = (TextView) findViewById(R.id.textView9);
+
 		if (savedInstanceState != null) {
 			// Restore value of members from saved state
 			totalColliCount = savedInstanceState.getInt("totalColliCount");
 			newTicketColli = savedInstanceState.getInt("newTicketColli");
 			finishedColli = savedInstanceState.getInt("finishedColli");
-			Log.d("DBG", "onRestoreInstanceState was called");
+			text2.setText(String.valueOf(newTicketColli)); // Show current
+															// ticket
+			text3.setText(String.valueOf(finishedColli)); // Show finished colli
+			float timeWorked = calcWorkTime();
+			// Print hours worked with only 1 decimal
+			text4.setText(String.format("%.1f", Float.valueOf(timeWorked)));
+
+			// Print colli per hour with only 1 decimal
+			float colliPerHour = finishedColli / timeWorked;
+			text5.setText(String.format("%.1f", Float.valueOf(colliPerHour)));
+			Log.d("DBG", "onCreate was called");
 		} else {
 			totalColliCount = 0;
 			newTicketColli = 0;
 			finishedColli = 0;
 		}
-
-		setContentView(R.layout.activity_main);
-		user_input = (EditText) findViewById(R.id.editText1);
-		text2 = (TextView) findViewById(R.id.textView6);
-		text3 = (TextView) findViewById(R.id.textView7);
-		text4 = (TextView) findViewById(R.id.textView8);
-		text5 = (TextView) findViewById(R.id.textView9);
 	}
 
 	@Override
@@ -80,8 +91,10 @@ public class MainActivity extends SherlockActivity implements
 					.show();
 			break;
 		case R.id.action_settings:
-			Toast.makeText(this, "Action Settings selected", Toast.LENGTH_SHORT)
-					.show();
+
+			Intent intent = new Intent(MainActivity.this,
+				      Preferences.class);
+				      startActivity(intent);
 			break;
 
 		default:
@@ -98,74 +111,86 @@ public class MainActivity extends SherlockActivity implements
 	}
 
 	// Check to see if the input is not blank
-	private void validateInput(EditText in) {
+	private boolean inputIsValid(EditText in) {
 		if (in.getText().length() == 0) {
 			Toast.makeText(this, getString(R.string.toast_no_user_input),
 					Toast.LENGTH_LONG).show();
-			return;
+			return false;
 		}
+		return true;
 	}
 
 	// This method is called when the process button is clicked
 	public void onProcess(View view) {
 		hideKeypad();
-		validateInput(user_input);
+		if (!inputIsValid(userInput))
+			return;
 
-		int newTicketColli = Integer.parseInt(user_input.getText().toString());
+		// Save user input to variable
+		newTicketColli = Integer.parseInt(userInput.getText().toString());
+		// Add the new ticket to the totalColliCount
 		totalColliCount += newTicketColli;
-		int finishedColli = Math.abs(totalColliCount - newTicketColli);
-		text2.setText(String.valueOf(newTicketColli)); // Set current ticket
-		text3.setText(String.valueOf(finishedColli)); // Set finished colli
-		user_input.setText(""); // Empty the input field
+		// Calculate the finished collis
+		finishedColli = totalColliCount - newTicketColli;
+
+		text2.setText(String.valueOf(newTicketColli)); // Show current ticket
+		text3.setText(String.valueOf(finishedColli)); // Show finished colli
+		userInput.setText(""); // Empty the input field
+
 		Toast.makeText(this,
 				"Nieuwe bon met " + newTicketColli + " colli toegevoegd.",
 				Toast.LENGTH_LONG).show();
-		// Current date and time
-		GregorianCalendar gregorianCalendar1 = new GregorianCalendar();
+
+		float timeWorked = calcWorkTime();
+		// Print hours worked with only 1 decimal
+		text4.setText(String.format("%.1f", Float.valueOf(timeWorked)));
+
+		// Print colli per hour with only 1 decimal
+		float colliPerHour = finishedColli / timeWorked;
+		text5.setText(String.format("%.1f", Float.valueOf(colliPerHour)));
+	}
+
+	private float calcWorkTime() {
+		// Current date and current time
+		GregorianCalendar datetimestampNow = new GregorianCalendar();
 		// Current date and 7am
-		GregorianCalendar gregorianCalendar2 = new GregorianCalendar(
-				gregorianCalendar1.get(Calendar.YEAR),
-				gregorianCalendar1.get(Calendar.MONTH),
-				gregorianCalendar1.get(Calendar.DAY_OF_MONTH), 7, 0, 0);
+		GregorianCalendar datetimestampStart = new GregorianCalendar(
+				datetimestampNow.get(Calendar.YEAR),
+				datetimestampNow.get(Calendar.MONTH),
+				datetimestampNow.get(Calendar.DAY_OF_MONTH), 7, 0, 0);
 		// Calculates the time difference between now and 7am
-		float f1 = (gregorianCalendar1.getTime().getTime() - gregorianCalendar2
+		float workTimeGross = (datetimestampNow.getTime().getTime() - datetimestampStart
 				.getTime().getTime()) / 1000.0F / 60.0F / 60.0F;
-		float f2 = 0; // Initialize the resulting variable
+		// Initialize the resulting variable
+		float workTimeNet = 0;
 
-		if (f1 <= 2.0F)
-			f2 = f1;
-		if ((f1 > 2.0F) && (f1 <= 2.25D)) {
-			f2 = f1 - (f1 - 2.0F);
+		// Subtract break times where due (hard coded)
+		if (workTimeGross <= 2.0F)
+			workTimeNet = workTimeGross;
+		if ((workTimeGross > 2.0F) && (workTimeGross <= 2.25D)) {
+			workTimeNet = workTimeGross - (workTimeGross - 2.0F);
 		}
-		if ((f1 >= 2.25D) && (f1 <= 5.0F)) {
-			f2 = f1 - 0.25F;
+		if ((workTimeGross >= 2.25D) && (workTimeGross <= 5.0F)) {
+			workTimeNet = workTimeGross - 0.25F;
 		}
-		if ((f1 >= 5.0F) && (f1 <= 5.5D)) {
-			f2 = f1 - (f1 - 5.0F) - 0.25F;
+		if ((workTimeGross >= 5.0F) && (workTimeGross <= 5.5D)) {
+			workTimeNet = workTimeGross - (workTimeGross - 5.0F) - 0.25F;
 		}
-		if ((f1 >= 5.5D) && (f1 <= 7.75D)) {
-			f2 = f1 - 0.75F;
+		if ((workTimeGross >= 5.5D) && (workTimeGross <= 7.75D)) {
+			workTimeNet = workTimeGross - 0.75F;
 		}
-		if ((f1 >= 7.75D) && (f1 <= 8.0F)) {
-			f2 = f1 - (f1 - 7.75F - 0.75F);
+		if ((workTimeGross >= 7.75D) && (workTimeGross <= 8.0F)) {
+			workTimeNet = workTimeGross - (workTimeGross - 7.75F - 0.75F);
 		}
-		boolean bool = f1 > 8.0F;
+		boolean bool = workTimeGross > 8.0F;
 		if (bool)
-			f2 = f1 - 1.0F;
-
-		float lol = Float.valueOf(f2);
-		text4.setText(String.format("%.1f", lol)); // Print hours worked with
-													// only 1 decimal
-
-		float f3 = finishedColli / f2;
-		float lol2 = Float.valueOf(f3);
-		text5.setText(String.format("%.1f", lol2)); // Print colli per hour with
-													// only 1 decimal
+			workTimeNet = workTimeGross - 1.0F;
+		return workTimeNet;
 	}
 
 	// This method is called when the refresh button is clicked
 	public void onRefresh(View view) {
-		user_input.setText("0");
+		userInput.setText("0");
 		onProcess(view);
 	}
 
