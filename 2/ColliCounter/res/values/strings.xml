@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Colli Counter</string>
+    <string name="submit">Verwerk</string>
+    <string name="colli_last_ticket">Colli in nieuwe bon</string>
+    <string name="current_ticket">Huidige bon</string>
+    <string name="finished_colli">Afgeronde colli</string>
+    <string name="hours_worked">Uren gewerkt</string>
+    <string name="colli_per_hour">Colli per uur</string>
+    <string name="zero">0</string>
+    <string name="refresh">Herlaad</string>
+    <string name="settings">Instellingen</string>
+    <string name="toast_no_user_input">Vul het aantal colli in van uw nieuwe bon</string>
+    
+
+</resources>
