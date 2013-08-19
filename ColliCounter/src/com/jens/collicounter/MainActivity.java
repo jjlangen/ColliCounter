@@ -1,7 +1,10 @@
 package com.jens.collicounter;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -153,11 +156,17 @@ public class MainActivity extends SherlockActivity implements
 	private float calcWorkTime() {
 		// Current date and current time
 		GregorianCalendar datetimestampNow = new GregorianCalendar();
-		// Current date and 7am
+		// Load preferences
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// Save preference start work time to an array
+		String[] prefStartTime = sharedPrefs.getString("timeStartWork", "NULL").split(":");
+		// Current date and the start of work time loaded from preferences
 		GregorianCalendar datetimestampStart = new GregorianCalendar(
 				datetimestampNow.get(Calendar.YEAR),
 				datetimestampNow.get(Calendar.MONTH),
-				datetimestampNow.get(Calendar.DAY_OF_MONTH), 7, 0, 0);
+				datetimestampNow.get(Calendar.DAY_OF_MONTH),
+				Integer.parseInt(prefStartTime[0]),
+				Integer.parseInt(prefStartTime[1]), 0);
 		// Calculates the time difference between now and 7am
 		float workTimeGross = (datetimestampNow.getTime().getTime() - datetimestampStart
 				.getTime().getTime()) / 1000.0F / 60.0F / 60.0F;

@@ -10,8 +10,9 @@
             android:title="Gebruik advertenties" />
         
         <com.jens.collicounter.TimePickerPreference
-            android:key="time"
-            android:title="Begin werktijd" />
+            android:key="timeStartWork"
+            android:title="Begin werktijd"
+            android:summary="Of geef mij een euro" />
         
 
     </PreferenceCategory>

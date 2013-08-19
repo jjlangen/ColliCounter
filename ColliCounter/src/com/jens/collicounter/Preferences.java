@@ -1,9 +1,10 @@
 package com.jens.collicounter;
 
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
-public class Preferences extends PreferenceActivity {
+import android.os.Bundle;
+
+public class Preferences extends SherlockPreferenceActivity {
 
 	@SuppressWarnings("deprecation")
 	@Override
