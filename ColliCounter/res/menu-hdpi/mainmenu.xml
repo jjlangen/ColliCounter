@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
+    <item
+        android:id="@+id/action_undo"
+        android:icon="@drawable/content_undo"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/undo">
+    </item>
     <item
         android:id="@+id/action_refresh"
         android:icon="@drawable/navigation_refresh"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:showAsAction="always"
         android:title="@string/refresh">
     </item>
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/action_settings"
-        android:orderInCategory="101"
-        android:showAsAction="always"
+        android:orderInCategory="102"
+        android:showAsAction="ifRoom"
         android:title="@string/settings">
     </item>
 

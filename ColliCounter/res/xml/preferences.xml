@@ -4,16 +4,30 @@
     <PreferenceCategory
         android:summary="settings"
         android:title="Instellingen" >
-        <CheckBoxPreference
-            android:key="checkBox"
-            android:summary="Of geef mij een euro"
-            android:title="Gebruik advertenties" />
         
         <com.jens.collicounter.TimePickerPreference
             android:key="timeStartWork"
             android:title="Begin werktijd"
-            android:summary="Of geef mij een euro" />
+            android:summary="" />
+       
+       <CheckBoxPreference
+            android:key="timeBreak"
+            android:title="Pauzes"
+            android:summary="Pauze om 09.00, 12.00 en 14.45"
+            android:defaultValue="true" />
         
+
+    </PreferenceCategory>
+    
+        <PreferenceCategory
+        android:summary="settings"
+        android:title="Extra" >
+
+        <CheckBoxPreference
+            android:key="adsEnabled"
+            android:summary="Of geef mij een euro"
+            android:title="Gebruik advertenties"
+            android:defaultValue="true" />
 
     </PreferenceCategory>
 

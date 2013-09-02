@@ -73,7 +73,7 @@ public class TimePickerPreference extends DialogPreference {
 
 		if (restoreValue) {
 			if (defaultValue == null) {
-				time = getPersistedString("00:00");
+				time = getPersistedString("07:00");
 			} else {
 				time = getPersistedString(defaultValue.toString());
 			}

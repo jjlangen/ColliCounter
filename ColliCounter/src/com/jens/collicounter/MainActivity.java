@@ -1,6 +1,5 @@
 package com.jens.collicounter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -30,9 +30,12 @@ public class MainActivity extends SherlockActivity implements
 	private TextView text3;
 	private TextView text4;
 	private TextView text5;
+	private TextView textarr1;
+	private TextView textarr2;
 	private int totalColliCount;
 	private int newTicketColli;
 	private int finishedColli;
+	ArrayList<Integer> arrayColli = new ArrayList<Integer>(); // Create an arraylist to store the user input collis
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class MainActivity extends SherlockActivity implements
 		text3 = (TextView) findViewById(R.id.textView7);
 		text4 = (TextView) findViewById(R.id.textView8);
 		text5 = (TextView) findViewById(R.id.textView9);
+		textarr1 = (TextView) findViewById(R.id.textView12);
+		textarr2 = (TextView) findViewById(R.id.textView13);
 
 		if (savedInstanceState != null) {
 			// Restore value of members from saved state
@@ -65,7 +70,7 @@ public class MainActivity extends SherlockActivity implements
 			totalColliCount = 0;
 			newTicketColli = 0;
 			finishedColli = 0;
-		}
+		} 
 	}
 
 	@Override
@@ -90,6 +95,7 @@ public class MainActivity extends SherlockActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_refresh:
+			// TODO: action refresh
 			Toast.makeText(this, "Action refresh selected", Toast.LENGTH_SHORT)
 					.show();
 			break;
@@ -99,7 +105,9 @@ public class MainActivity extends SherlockActivity implements
 				      Preferences.class);
 				      startActivity(intent);
 			break;
-
+		case R.id.action_undo:
+			// TODO: action undo
+			break;
 		default:
 			break;
 		}
@@ -122,13 +130,33 @@ public class MainActivity extends SherlockActivity implements
 		}
 		return true;
 	}
-
+	
+	private int sumupArrayList(ArrayList<Integer> list) {
+		int sum = 0;
+		for(Integer listValue : list){
+		    sum += listValue;
+		}
+		return sum;
+	}
+	
+	private int lastArrayList(ArrayList<Integer> list) {
+		int last = 0;
+		last = list.get(list.size() - 1);
+		return last;
+	}
+	
 	// This method is called when the process button is clicked
 	public void onProcess(View view) {
 		hideKeypad();
 		if (!inputIsValid(userInput))
 			return;
-
+		
+		///////////////////////////////////////////// vervang alle variabelen door de arraylist!!!!!!!!
+		
+		arrayColli.add(Integer.parseInt(userInput.getText().toString()));
+		textarr1.setText(String.valueOf(sumupArrayList(arrayColli) - lastArrayList(arrayColli)));
+		textarr2.setText(String.valueOf(lastArrayList(arrayColli)));
+		
 		// Save user input to variable
 		newTicketColli = Integer.parseInt(userInput.getText().toString());
 		// Add the new ticket to the totalColliCount
@@ -159,7 +187,7 @@ public class MainActivity extends SherlockActivity implements
 		// Load preferences
 		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		// Save preference start work time to an array
-		String[] prefStartTime = sharedPrefs.getString("timeStartWork", "NULL").split(":");
+		String[] prefStartTime = sharedPrefs.getString("timeStartWork", "7:00").split(":"); // default start at 07:00
 		// Current date and the start of work time loaded from preferences
 		GregorianCalendar datetimestampStart = new GregorianCalendar(
 				datetimestampNow.get(Calendar.YEAR),
@@ -196,13 +224,7 @@ public class MainActivity extends SherlockActivity implements
 			workTimeNet = workTimeGross - 1.0F;
 		return workTimeNet;
 	}
-
-	// This method is called when the refresh button is clicked
-	public void onRefresh(View view) {
-		userInput.setText("0");
-		onProcess(view);
-	}
-
+	
 	@Override
 	public void onItemSelected(IcsAdapterView<?> parent, View view,
 			int position, long id) {

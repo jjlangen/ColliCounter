@@ -11,6 +11,7 @@
     <string name="zero">0</string>
     <string name="refresh">Herlaad</string>
     <string name="settings">Instellingen</string>
+    <string name="undo">Herstel</string>
     <string name="toast_no_user_input">Vul het aantal colli in van uw nieuwe bon</string>
     
 
