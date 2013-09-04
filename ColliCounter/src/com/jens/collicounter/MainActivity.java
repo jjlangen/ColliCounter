@@ -30,11 +30,9 @@ public class MainActivity extends SherlockActivity implements
 	private TextView text3;
 	private TextView text4;
 	private TextView text5;
-	private TextView textarr1;
-	private TextView textarr2;
-	private int totalColliCount;
-	private int newTicketColli;
-	private int finishedColli;
+	private int colliTotal;
+	private int colliCurrentTicket;
+	private int colliFinished;
 	ArrayList<Integer> arrayColli = new ArrayList<Integer>(); // Create an arraylist to store the user input collis
 
 	@Override
@@ -47,38 +45,35 @@ public class MainActivity extends SherlockActivity implements
 		text3 = (TextView) findViewById(R.id.textView7);
 		text4 = (TextView) findViewById(R.id.textView8);
 		text5 = (TextView) findViewById(R.id.textView9);
-		textarr1 = (TextView) findViewById(R.id.textView12);
-		textarr2 = (TextView) findViewById(R.id.textView13);
 
 		if (savedInstanceState != null) {
 			// Restore value of members from saved state
-			totalColliCount = savedInstanceState.getInt("totalColliCount");
-			newTicketColli = savedInstanceState.getInt("newTicketColli");
-			finishedColli = savedInstanceState.getInt("finishedColli");
-			text2.setText(String.valueOf(newTicketColli)); // Show current
-															// ticket
-			text3.setText(String.valueOf(finishedColli)); // Show finished colli
+			colliTotal = savedInstanceState.getInt("colliTotal");
+			colliCurrentTicket = savedInstanceState.getInt("colliCurrentTicket");
+			colliFinished = savedInstanceState.getInt("colliFinished");
+			text2.setText(String.valueOf(colliCurrentTicket)); // Show current ticket
+			text3.setText(String.valueOf(colliFinished)); // Show finished colli
 			float timeWorked = calcWorkTime();
 			// Print hours worked with only 1 decimal
 			text4.setText(String.format("%.1f", Float.valueOf(timeWorked)));
 
 			// Print colli per hour with only 1 decimal
-			float colliPerHour = finishedColli / timeWorked;
+			float colliPerHour = colliFinished / timeWorked;
 			text5.setText(String.format("%.1f", Float.valueOf(colliPerHour)));
 			Log.d("DBG", "onCreate was called");
 		} else {
-			totalColliCount = 0;
-			newTicketColli = 0;
-			finishedColli = 0;
+			colliTotal = 0;
+			colliCurrentTicket = 0;
+			colliFinished = 0;
 		} 
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("totalColliCount", totalColliCount);
-		outState.putInt("newTicketColli", newTicketColli);
-		outState.putInt("finishedColli", finishedColli);
+		outState.putInt("colliTotal", colliTotal);
+		outState.putInt("colliCurrentTicket", colliCurrentTicket);
+		outState.putInt("colliFinished", colliFinished);
 		Log.d("DBG", "onSaveInstanceState was called");
 	}
 
@@ -105,8 +100,11 @@ public class MainActivity extends SherlockActivity implements
 				      Preferences.class);
 				      startActivity(intent);
 			break;
-		case R.id.action_undo:
-			// TODO: action undo
+		case R.id.action_undo: // HIER GEBLEVEN!!!
+			arrayColli.remove(arrayColli.size() - 1);
+			updateFields();
+			Toast.makeText(this, "Undo last ticket with " + colliCurrentTicket + " colli", Toast.LENGTH_SHORT)
+			.show();
 			break;
 		default:
 			break;
@@ -131,7 +129,7 @@ public class MainActivity extends SherlockActivity implements
 		return true;
 	}
 	
-	private int sumupArrayList(ArrayList<Integer> list) {
+	private int getColliTotal(ArrayList<Integer> list) {
 		int sum = 0;
 		for(Integer listValue : list){
 		    sum += listValue;
@@ -139,10 +137,13 @@ public class MainActivity extends SherlockActivity implements
 		return sum;
 	}
 	
-	private int lastArrayList(ArrayList<Integer> list) {
+	private int getColliCurrentTicket(ArrayList<Integer> list) {
 		int last = 0;
 		last = list.get(list.size() - 1);
 		return last;
+	}
+	
+	private void updateFields() {
 	}
 	
 	// This method is called when the process button is clicked
@@ -150,26 +151,18 @@ public class MainActivity extends SherlockActivity implements
 		hideKeypad();
 		if (!inputIsValid(userInput))
 			return;
-		
-		///////////////////////////////////////////// vervang alle variabelen door de arraylist!!!!!!!!
-		
-		arrayColli.add(Integer.parseInt(userInput.getText().toString()));
-		textarr1.setText(String.valueOf(sumupArrayList(arrayColli) - lastArrayList(arrayColli)));
-		textarr2.setText(String.valueOf(lastArrayList(arrayColli)));
-		
-		// Save user input to variable
-		newTicketColli = Integer.parseInt(userInput.getText().toString());
-		// Add the new ticket to the totalColliCount
-		totalColliCount += newTicketColli;
-		// Calculate the finished collis
-		finishedColli = totalColliCount - newTicketColli;
 
-		text2.setText(String.valueOf(newTicketColli)); // Show current ticket
-		text3.setText(String.valueOf(finishedColli)); // Show finished colli
-		userInput.setText(""); // Empty the input field
+		// Save user input in the Colli array and put function result into variables
+		arrayColli.add(Integer.parseInt(userInput.getText().toString()));
+		int colliCurrentTicket = getColliCurrentTicket(arrayColli);
+		int colliTotal = getColliTotal(arrayColli);
+		int colliFinished = colliTotal - colliCurrentTicket;
+		text2.setText(String.valueOf(colliCurrentTicket));		// Update current ticket
+		text3.setText(String.valueOf(colliFinished)); 			// Update finished colli
+		userInput.setText(""); 								// Empty the input field
 
 		Toast.makeText(this,
-				"Nieuwe bon met " + newTicketColli + " colli toegevoegd.",
+				"Nieuwe bon met " + colliCurrentTicket + " colli toegevoegd.",
 				Toast.LENGTH_LONG).show();
 
 		float timeWorked = calcWorkTime();
@@ -177,7 +170,7 @@ public class MainActivity extends SherlockActivity implements
 		text4.setText(String.format("%.1f", Float.valueOf(timeWorked)));
 
 		// Print colli per hour with only 1 decimal
-		float colliPerHour = finishedColli / timeWorked;
+		float colliPerHour = colliFinished / timeWorked;
 		text5.setText(String.format("%.1f", Float.valueOf(colliPerHour)));
 	}
 
