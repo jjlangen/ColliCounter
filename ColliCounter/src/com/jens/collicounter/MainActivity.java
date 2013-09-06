@@ -30,9 +30,9 @@ public class MainActivity extends SherlockActivity implements
 	private TextView text3;
 	private TextView text4;
 	private TextView text5;
-	private int colliTotal;
-	private int colliCurrentTicket;
-	private int colliFinished;
+	public int colliTotal;
+	public int colliCurrentTicket;
+	public int colliFinished;
 	ArrayList<Integer> arrayColli = new ArrayList<Integer>(); // Create an arraylist to store the user input collis
 
 	@Override
@@ -90,8 +90,8 @@ public class MainActivity extends SherlockActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_refresh:
-			// TODO: action refresh
-			Toast.makeText(this, "Action refresh selected", Toast.LENGTH_SHORT)
+			updateFields();
+			Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT)
 					.show();
 			break;
 		case R.id.action_settings:
@@ -100,11 +100,17 @@ public class MainActivity extends SherlockActivity implements
 				      Preferences.class);
 				      startActivity(intent);
 			break;
-		case R.id.action_undo: // HIER GEBLEVEN!!!
-			arrayColli.remove(arrayColli.size() - 1);
+		case R.id.action_undo:
+			if(arrayColli.size() <= 1) {   // alternative procedure when the array is almost empty or empty
+				arrayColli.clear();
+				Toast.makeText(this, "Removed all collis", Toast.LENGTH_SHORT)
+				.show();
+			} else {   // remove the last input
+				Toast.makeText(this, "Removed last ticket with " + getColliCurrentTicket(arrayColli) + " colli", Toast.LENGTH_SHORT)
+				.show();
+				arrayColli.remove(arrayColli.size() - 1);
+			}
 			updateFields();
-			Toast.makeText(this, "Undo last ticket with " + colliCurrentTicket + " colli", Toast.LENGTH_SHORT)
-			.show();
 			break;
 		default:
 			break;
@@ -144,6 +150,21 @@ public class MainActivity extends SherlockActivity implements
 	}
 	
 	private void updateFields() {
+		if (arrayColli.size() == 0) {
+			colliCurrentTicket = 0;
+			colliTotal = 0;
+			colliFinished = 0;
+		} else {
+			colliCurrentTicket = getColliCurrentTicket(arrayColli);
+			colliTotal = getColliTotal(arrayColli);
+			colliFinished = colliTotal - colliCurrentTicket;
+		}
+		text2.setText(String.valueOf(colliCurrentTicket));
+		text3.setText(String.valueOf(colliFinished));
+		float timeWorked = calcWorkTime();
+		text4.setText(String.format("%.1f", Float.valueOf(timeWorked))); // Print hours worked with only 1 decimal
+		float colliPerHour = colliFinished / timeWorked; 
+		text5.setText(String.format("%.1f", Float.valueOf(colliPerHour))); // Print colli per hour with only 1 decimal
 	}
 	
 	// This method is called when the process button is clicked
@@ -154,24 +175,12 @@ public class MainActivity extends SherlockActivity implements
 
 		// Save user input in the Colli array and put function result into variables
 		arrayColli.add(Integer.parseInt(userInput.getText().toString()));
-		int colliCurrentTicket = getColliCurrentTicket(arrayColli);
-		int colliTotal = getColliTotal(arrayColli);
-		int colliFinished = colliTotal - colliCurrentTicket;
-		text2.setText(String.valueOf(colliCurrentTicket));		// Update current ticket
-		text3.setText(String.valueOf(colliFinished)); 			// Update finished colli
+		updateFields();
 		userInput.setText(""); 								// Empty the input field
 
 		Toast.makeText(this,
 				"Nieuwe bon met " + colliCurrentTicket + " colli toegevoegd.",
 				Toast.LENGTH_LONG).show();
-
-		float timeWorked = calcWorkTime();
-		// Print hours worked with only 1 decimal
-		text4.setText(String.format("%.1f", Float.valueOf(timeWorked)));
-
-		// Print colli per hour with only 1 decimal
-		float colliPerHour = colliFinished / timeWorked;
-		text5.setText(String.format("%.1f", Float.valueOf(colliPerHour)));
 	}
 
 	private float calcWorkTime() {
