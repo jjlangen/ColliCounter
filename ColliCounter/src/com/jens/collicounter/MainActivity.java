@@ -1,5 +1,7 @@
 package com.jens.collicounter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -89,34 +91,55 @@ public class MainActivity extends SherlockActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_refresh:
-			updateFields();
-			Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.action_settings:
-
-			Intent intent = new Intent(MainActivity.this,
-				      Preferences.class);
-				      startActivity(intent);
-			break;
-		case R.id.action_undo:
-			if(arrayColli.size() <= 1) {   // alternative procedure when the array is almost empty or empty
-				arrayColli.clear();
-				Toast.makeText(this, "Removed all collis", Toast.LENGTH_SHORT)
-				.show();
-			} else {   // remove the last input
-				Toast.makeText(this, "Removed last ticket with " + getColliCurrentTicket(arrayColli) + " colli", Toast.LENGTH_SHORT)
-				.show();
-				arrayColli.remove(arrayColli.size() - 1);
-			}
-			updateFields();
-			break;
-		default:
-			break;
+			case R.id.action_refresh:
+				updateFields();
+				Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT)
+						.show();
+				break;
+			case R.id.action_settings:
+	
+				Intent intent = new Intent(MainActivity.this,
+					      Preferences.class);
+					      startActivity(intent);
+				break;
+			case R.id.action_undo:
+				if(arrayColli.size() != 0)
+					ShowAlertBox("Let op!", "Weet u zeker dat u uw laatste bon met " + colliCurrentTicket +" colli wilt verwijderen?");
+				else
+					Toast.makeText(this, "Er valt niks te verwijderen", Toast.LENGTH_SHORT).show();
+				break;
+				
+			default:
+				break;
 		}
 
 		return true;
+	}
+
+	private void ShowAlertBox(String title, String desc) {
+		new AlertDialog.Builder(this) // confirmation dialog
+		.setTitle(title)
+		.setMessage(desc)
+		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+		    public void onClick(DialogInterface dialog, int whichButton) {
+		        arrayRemoveLast();
+		    }})
+		 .setNegativeButton(android.R.string.no, null).show();
+	}
+
+	public void arrayRemoveLast() {
+		if(arrayColli.size() <= 1) {   	// alternative procedure when the array is almost empty or empty
+			arrayColli.clear();
+			Toast.makeText(this, "Removed all collis", Toast.LENGTH_SHORT)
+			.show();
+		} else {   						// remove the last input
+			Toast.makeText(this, "Removed last ticket with " + getColliCurrentTicket(arrayColli) + " colli", Toast.LENGTH_SHORT)
+			.show();
+			arrayColli.remove(arrayColli.size() - 1);
+		}
+		updateFields();
 	}
 
 	// Hides the keypad
