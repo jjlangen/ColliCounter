@@ -76,7 +76,7 @@ public class MainActivity extends SherlockActivity implements
 		outState.putInt("colliTotal", colliTotal);
 		outState.putInt("colliCurrentTicket", colliCurrentTicket);
 		outState.putInt("colliFinished", colliFinished);
-		Log.d("DBG", "onSaveInstanceState was called");
+		// Log.d("DBG", "onSaveInstanceState was called");
 	}
 
 	// NEW
