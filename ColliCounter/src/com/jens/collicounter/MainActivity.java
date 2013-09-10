@@ -92,6 +92,7 @@ public class MainActivity extends SherlockActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_refresh:
+				// add popup with user input amount of colli left in current ticket
 				updateFields();
 				Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT)
 						.show();
